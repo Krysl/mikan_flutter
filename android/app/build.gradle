@@ -66,11 +66,14 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
+    def v = 1
     applicationVariants.all { variant ->
         variant.outputs.each { output ->
-            output.versionCodeOverride = flutterVersionCode.toInteger()
+            output.versionCodeOverride = flutterVersionCode.toInteger() + v * 10000
+            v += 1
         }
     }
+
 }
 
 flutter {
