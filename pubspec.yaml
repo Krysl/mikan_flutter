@@ -1,7 +1,7 @@
 name: mikan
 description: mikanani.me
 
-version: 1.2.10+76
+version: 1.2.11+77
 
 publish_to: none
 
@@ -38,7 +38,7 @@ dependencies:
   sliver_tools: ^0.2.10
   flutter_displaymode: ^0.6.0
   flex_color_picker: ^3.2.2
-  intl: ^0.19.0
+  intl: ^0.20.2
   collection: ^1.19.0
   json_annotation: ^4.8.1
   path: ^1.8.2
