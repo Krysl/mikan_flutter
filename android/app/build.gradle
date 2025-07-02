@@ -65,6 +65,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.versionCodeOverride = flutterVersionCode.toInteger()
+        }
+    }
 }
 
 flutter {
