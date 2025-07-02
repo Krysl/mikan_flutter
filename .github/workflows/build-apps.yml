@@ -32,8 +32,8 @@ jobs:
       - name: Build apks
         run: |
           flutter pub get
-          flutter build apk --release --tree-shake-icons
-          flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi --release --tree-shake-icons
+          flutter build apk --target-platform android-arm64,android-x64 --release --tree-shake-icons
+          flutter build apk --target-platform android-arm64,android-x64 --split-per-abi --release --tree-shake-icons
           mkdir -p releases
           mv -f build/app/outputs/flutter-apk/*-release.apk releases
           mv -f releases/app-release.apk releases/app-universal-release.apk
