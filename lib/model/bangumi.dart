@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:jiffy/jiffy.dart';
 
 import '../internal/hive.dart';
 
@@ -60,4 +61,25 @@ class Bangumi extends HiveObject {
       subscribed.hashCode ^
       grey.hashCode ^
       week.hashCode;
+}
+
+extension UpdateAtFromNow on Bangumi {
+  String get updateAtFromNow {
+    if (!updateAt.contains(RegExp(r'\d'))) {
+      return updateAt;
+    }
+    try {
+      return Jiffy.parse(
+        updateAt,
+        pattern: 'y/M/d 更新',
+      ).fromNow();
+    } on FormatException catch (_) {
+      return updateAt;
+    }
+  }
+
+  String get updateAtAuto => switch (MyHive.getDateTimeMode()) {
+        DateTimeMode.normal => updateAt,
+        DateTimeMode.fromNow => updateAtFromNow,
+      };
 }

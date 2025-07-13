@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:jiffy/jiffy.dart';
 
 import '../internal/consts.dart';
 import '../internal/extension.dart';
@@ -131,4 +132,36 @@ class RecordItem {
     // }
     return sb.toString();
   }();
+}
+
+extension PublishAtFromNow on RecordItem {
+  String get publishAtFromNow {
+    try {
+      if (publishAt.contains('今天 ')) {
+        final now = DateTime.now();
+        final today = '${now.year}/${now.month}/${now.day}';
+        return Jiffy.parse(
+          publishAt.replaceAll(
+            RegExp('今天'),
+            today,
+          ),
+          pattern: 'y/M/d HH:m',
+        ).fromNow();
+      } else {
+        return Jiffy.parse(
+          publishAt
+              .replaceAll(RegExp('周. '), '')
+              .replaceAll(RegExp('[年月日]'), '/'),
+          pattern: 'y/M/d/HH:m',
+        ).fromNow();
+      }
+    } on FormatException catch (_) {
+      return publishAt;
+    }
+  }
+
+  String get publishAtAuto => switch (MyHive.getDateTimeMode()) {
+        DateTimeMode.normal => publishAt,
+        DateTimeMode.fromNow => publishAtFromNow,
+      };
 }

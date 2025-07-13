@@ -222,7 +222,7 @@ class SliverBangumiList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      bangumi.updateAt,
+                      bangumi.updateAtAuto,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall!
@@ -324,7 +324,7 @@ class SliverBangumiList extends StatelessWidget {
         ),
         if (bangumi.updateAt.isNotBlank)
           Text(
-            bangumi.updateAt,
+            bangumi.updateAtAuto,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.bodySmall,
@@ -406,7 +406,7 @@ class SliverBangumiList extends StatelessWidget {
                   ),
                   if (bangumi.updateAt.isNotBlank)
                     Text(
-                      bangumi.updateAt,
+                      bangumi.updateAtAuto,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodySmall,

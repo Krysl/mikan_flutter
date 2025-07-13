@@ -121,7 +121,7 @@ class ListRecordItem extends StatelessWidget {
                                             style: theme.textTheme.titleSmall,
                                           ),
                                           Text(
-                                            record.publishAt,
+                                            record.publishAtAuto,
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
                                             style: theme.textTheme.bodySmall,

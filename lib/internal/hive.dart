@@ -186,6 +186,19 @@ class MyHive {
     }
   }
 
+  static DateTimeMode getDateTimeMode() {
+    final name = settings.get(SettingsHiveKey.dateTimeMode);
+    return DateTimeMode.values.firstWhereOrNull((e) => e.name == name) ??
+        DateTimeMode.normal;
+  }
+
+  static Future<void> setDateTimeMode(DateTimeMode mode) async {
+    final dateTimeMode = getDateTimeMode();
+    if (dateTimeMode != mode) {
+      await settings.put(SettingsHiveKey.dateTimeMode, mode.name);
+    }
+  }
+
   static String getMirrorUrl() {
     return settings.get(
       SettingsHiveKey.mirrorUrl,
@@ -264,6 +277,7 @@ class SettingsHiveKey {
   static const String cardStyle = 'CARD_STYLE';
   static const String tabletMode = 'TABLET_MODE';
   static const String dynamicColor = 'DYNAMIC_COLOR';
+  static const String dateTimeMode = 'DATETIME_MODE';
 }
 
 enum TabletMode {
@@ -281,4 +295,15 @@ enum TabletMode {
   bool get isAuto => this == TabletMode.auto;
 
   bool get isDisable => this == TabletMode.disable;
+}
+
+enum DateTimeMode {
+  normal('普通模式'),
+  fromNow('距今模式');
+
+  const DateTimeMode(this.label);
+  final String label;
+
+  bool get isNormalMode => this == DateTimeMode.normal;
+  bool get isFromNowMode => this == DateTimeMode.fromNow;
 }

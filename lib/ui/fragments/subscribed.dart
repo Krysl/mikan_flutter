@@ -484,7 +484,7 @@ class _SubscribedFragmentState extends LifecycleState<SubscribedFragment> {
           ),
           if (record.publishAt.isNotBlank)
             Text(
-              record.publishAt,
+              record.publishAtAuto,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.bodySmall,

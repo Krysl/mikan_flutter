@@ -76,7 +76,7 @@ class RssRecordItem extends StatelessWidget {
                                       ),
                                     ),
                                     Text(
-                                      record.publishAt,
+                                      record.publishAtAuto,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: theme.textTheme.bodySmall,

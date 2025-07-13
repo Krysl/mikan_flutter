@@ -22,6 +22,7 @@ import 'card_style.dart';
 import 'card_width.dart';
 import 'donate.dart';
 import 'index.dart';
+import 'select_datetime_mode.dart';
 import 'select_mirror.dart';
 import 'select_tablet_mode.dart';
 import 'theme_color.dart';
@@ -54,6 +55,7 @@ class SettingsPanel extends StatelessWidget {
                       _buildCardRatio(context, theme),
                       _buildCardWidth(context, theme),
                       _buildTabletMode(context, theme),
+                      _buildDateTimeMode(context, theme),
                       _buildSection(theme, '更多'),
                       _buildMirror(context, theme),
                       _buildDonate(context, theme),
@@ -393,6 +395,41 @@ class SettingsPanel extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeMode(BuildContext context, ThemeData theme) {
+    return RippleTap(
+      onTap: () {
+        MBottomSheet.show(
+          context,
+          (context) => const MBottomSheet(child: SelectDateTimeMode()),
+        );
+      },
+      child: Container(
+        height: 50.0,
+        padding: edgeH24,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                '日期样式',
+                style: theme.textTheme.titleMedium,
+              ),
+            ),
+            ValueListenableBuilder(
+              valueListenable: MyHive.settings
+                  .listenable(keys: [SettingsHiveKey.dateTimeMode]),
+              builder: (context, _, child) {
+                return Text(
+                  MyHive.getDateTimeMode().label,
+                  style: theme.textTheme.bodyMedium,
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -14,6 +14,7 @@ import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -48,6 +49,7 @@ final isDesktop = Platform.isMacOS || Platform.isLinux || Platform.isWindows;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Jiffy.setLocale('zh_cn');
   await _initMisc();
   await _initWindow();
   runApp(Restart(child: const MikanApp()));

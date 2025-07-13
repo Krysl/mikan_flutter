@@ -80,7 +80,7 @@ class SimpleRecordItem extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: Text(
-                        record.publishAt,
+                        record.publishAtAuto,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.bodySmall,
