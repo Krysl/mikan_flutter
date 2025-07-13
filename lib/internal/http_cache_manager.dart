@@ -3,22 +3,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'hive.dart';
+
+final _pathExists = <String>{};
 
 class HttpCacheManager {
-  HttpCacheManager._(this._cacheDir);
-
-  final String _cacheDir;
+  HttpCacheManager._();
 
   static late final HttpCacheManager _httpCacheManager;
 
-  static Future<void> init({String? cacheDir}) async {
-    if (cacheDir == null || cacheDir.isEmpty) {
-      cacheDir =
-          '${(await getApplicationSupportDirectory()).path}${Platform.pathSeparator}http_cache_manager';
-    }
-    _httpCacheManager = HttpCacheManager._(cacheDir);
-  }
+  static void init() => _httpCacheManager = HttpCacheManager._();
 
   static final HttpClient _client = HttpClient()..autoUncompress = false;
 
@@ -66,27 +61,17 @@ class HttpCacheManager {
     ]);
   }
 
-  Future<Directory> _getCacheDir([String? cacheDir]) async {
+  FutureOr<Directory> _getCacheDir([String? cacheDir]) {
     if (cacheDir == null) {
-      if (Platform.isWindows) {
-        cacheDir = (await getTemporaryDirectory()).path +
-            Platform.pathSeparator +
-            (await getApplicationSupportDirectory())
-                .parent
-                .path
-                .split(Platform.pathSeparator)
-                .last +
-            Platform.pathSeparator +
-            _cacheDir;
-      } else {
-        cacheDir = (await getTemporaryDirectory()).path +
-            Platform.pathSeparator +
-            _cacheDir;
-      }
+      return MyHive.httpCacheDir;
     }
+
     final Directory dir = Directory(cacheDir);
-    if (!dir.existsSync()) {
-      await dir.create(recursive: true);
+    if (!_pathExists.contains(cacheDir)) {
+      _pathExists.add(cacheDir);
+      if (!dir.existsSync()) {
+        return dir.create(recursive: true);
+      }
     }
     return dir;
   }

@@ -81,10 +81,10 @@ Future _initFirebase() async {
 Future<void> _initMisc() async {
   await Future.wait([
     MyHive.init(),
-    NetworkFontLoader.init(),
-    HttpCacheManager.init(),
     if (isSupportFirebase) _initFirebase(),
   ]);
+  NetworkFontLoader.init();
+  HttpCacheManager.init();
   if (Platform.isAndroid) {
     unawaited(
       FlutterDisplayMode.setHighRefreshRate().catchError((e, s) {

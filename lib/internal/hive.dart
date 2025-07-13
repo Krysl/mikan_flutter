@@ -5,6 +5,7 @@ import 'package:decimal/decimal.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 import '../model/announcement.dart';
 import '../model/bangumi.dart';
@@ -17,6 +18,17 @@ import '../model/subgroup.dart';
 import '../model/user.dart';
 import '../model/year_season.dart';
 import 'consts.dart';
+
+Future<Directory> _createDirIfNotExists(
+  Directory folder,
+  String subFolder,
+) async {
+  final dir = Directory(path.join(folder.path, subFolder));
+  if (!dir.existsSync()) {
+    await dir.create(recursive: true);
+  }
+  return dir;
+}
 
 class MyHive {
   const MyHive._();
@@ -39,15 +51,29 @@ class MyHive {
   static late final Box db;
 
   static Future<void> init() async {
+    late final Directory tmpDir;
+    late final Directory appSupportDir;
     await Future.wait([
-      getTemporaryDirectory().then((value) => cacheDir = value),
-      getApplicationSupportDirectory().then((value) => filesDir = value),
+      getTemporaryDirectory().then((value) => tmpDir = value),
+      getApplicationSupportDirectory().then((value) => appSupportDir = value),
     ]);
-    cookiesDir = '${filesDir.path}/cookies';
-    final directory = Directory(cookiesDir);
-    if (!directory.existsSync()) {
-      await directory.create(recursive: true);
-    }
+    filesDir = appSupportDir;
+    productName = appSupportDir.parent.path.split(Platform.pathSeparator).last;
+    cacheDir = Platform.isWindows
+        ? Directory(path.join(tmpDir.path, productName))
+        : tmpDir;
+
+    await Future.wait([
+      _createDirIfNotExists(cacheDir, 'images')
+          .then((dir) => imagesDir = dir.path),
+      _createDirIfNotExists(appSupportDir, 'http_cache_manager')
+          .then((dir) => httpCacheDir = dir),
+      _createDirIfNotExists(appSupportDir, 'fonts')
+          .then((dir) => fontsDir = dir.path),
+      _createDirIfNotExists(appSupportDir, 'cookies')
+          .then((dir) => cookiesDir = dir.path),
+    ]);
+
     Hive.init('${filesDir.path}${Platform.pathSeparator}hivedb');
     Hive.registerAdapter(BangumiAdapter());
     Hive.registerAdapter(BangumiRowAdapter());
@@ -67,8 +93,12 @@ class MyHive {
 
   static late final Directory cacheDir;
   static late final Directory filesDir;
+  static late final String productName;
 
   static late final String cookiesDir;
+  static late final String imagesDir;
+  static late final Directory httpCacheDir;
+  static late final String fontsDir;
 
   static const int KB = 1024;
   static const int MB = 1024 * KB;

@@ -9,7 +9,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart' as painting;
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+
+import 'hive.dart';
+
+late String? _cacheDir;
 
 @immutable
 class CacheImage extends painting.ImageProvider<painting.NetworkImage>
@@ -225,27 +228,7 @@ class CacheImage extends painting.ImageProvider<painting.NetworkImage>
     }
   }
 
-  Future<File> _getCacheFile(String fileName) async {
-    final String cacheDir;
-    if (Platform.isWindows) {
-      cacheDir = join(
-        (await getTemporaryDirectory()).path,
-        (await getApplicationSupportDirectory())
-            .parent
-            .path
-            .split(Platform.pathSeparator)
-            .last,
-        'images',
-      );
-    } else {
-      cacheDir = join((await getTemporaryDirectory()).path, 'images');
-    }
-    final dir = Directory(cacheDir);
-    if (!dir.existsSync()) {
-      await dir.create(recursive: true);
-    }
-    return File(join(dir.path, fileName));
-  }
+  File _getCacheFile(String fileName) => File(join(MyHive.imagesDir, fileName));
 
   @override
   bool operator ==(Object other) {
@@ -263,5 +246,6 @@ class CacheImage extends painting.ImageProvider<painting.NetworkImage>
       '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: $scale)';
 
   @override
-  WebHtmlElementStrategy get webHtmlElementStrategy => WebHtmlElementStrategy.never;
+  WebHtmlElementStrategy get webHtmlElementStrategy =>
+      WebHtmlElementStrategy.never;
 }

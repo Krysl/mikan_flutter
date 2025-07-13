@@ -4,27 +4,18 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'hive.dart';
 import 'http_cache_manager.dart';
 
 class NetworkFontLoader {
-  NetworkFontLoader._(this._cacheDir);
-
-  final String _cacheDir;
+  NetworkFontLoader._();
 
   static late final NetworkFontLoader _fontManager;
 
   late final Map<String, List<String>> _loadingFonts = <String, List<String>>{};
 
-  static Future<void> init({String? cacheDir}) async {
-    if (cacheDir == null || cacheDir.isEmpty) {
-      cacheDir =
-          '${(await getApplicationSupportDirectory()).path}${Platform.pathSeparator}fonts';
-    }
-    final Directory directory = Directory(cacheDir);
-    if (!directory.existsSync()) {
-      await directory.create(recursive: true);
-    }
-    _fontManager = NetworkFontLoader._(cacheDir);
+  static void init() {
+    _fontManager = NetworkFontLoader._();
   }
 
   static Future<void> load(
@@ -88,7 +79,7 @@ class NetworkFontLoader {
         final Future<ByteData> bytes = _loadFont(
           url,
           headers: headers,
-          cacheDir: _fontManager._cacheDir,
+          cacheDir: MyHive.fontsDir,
           chunkEvents: eventBus,
           cancelable: cancelable,
         );
