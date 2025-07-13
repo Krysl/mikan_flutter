@@ -42,6 +42,7 @@ class _SubscribedFragmentState extends LifecycleState<SubscribedFragment> {
   final _infiniteScrollController = InfiniteScrollController();
 
   Timer? _timer;
+  bool autoScroll = true;
 
   @override
   void initState() {
@@ -76,9 +77,13 @@ class _SubscribedFragmentState extends LifecycleState<SubscribedFragment> {
 
   @override
   void onResume() {
-    _newTimer();
+    if (autoScroll) {
+      _newTimer();
+    }
     Provider.of<SubscribedModel>(context, listen: false).refresh();
   }
+
+  bool get isAutoScroll => _timer?.isActive ?? false;
 
   @override
   Widget build(BuildContext context) {
@@ -260,6 +265,35 @@ class _SubscribedFragmentState extends LifecycleState<SubscribedFragment> {
                     child: Text('最近更新', style: theme.textTheme.titleMedium),
                   ),
                   if (!isEmpty)
+                    Text(
+                      '自动滚动',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  if (!isEmpty)
+                    Tooltip(
+                      message: '自动滚动:${isAutoScroll ? '开' : '关'}',
+                      child: SizedBox(
+                        height: 24,
+                        child: FittedBox(
+                          fit: BoxFit.fill,
+                          child: Switch(
+                            value: isAutoScroll,
+                            onChanged: (value) {
+                              setState(() {
+                                if (value) {
+                                  autoScroll = true;
+                                  onResume();
+                                } else {
+                                  autoScroll = false;
+                                  onPause();
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (!isEmpty)
                     Tooltip(
                       message: '最近三天共有${rss!.length}部订阅更新',
                       child: Text(
@@ -315,6 +349,7 @@ class _SubscribedFragmentState extends LifecycleState<SubscribedFragment> {
               itemCount: entries.length,
               center: false,
               velocityFactor: 1.0,
+              loop: isAutoScroll,
             ),
           ),
         );
