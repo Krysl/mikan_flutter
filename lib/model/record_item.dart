@@ -137,25 +137,40 @@ class RecordItem {
 extension PublishAtFromNow on RecordItem {
   String get publishAtFromNow {
     try {
-      if (publishAt.contains('今天 ')) {
+      String today([int day = 0]) {
         final now = DateTime.now();
-        final today = '${now.year}/${now.month}/${now.day}';
-        return Jiffy.parse(
-          publishAt.replaceAll(
-            RegExp('今天'),
-            today,
-          ),
-          pattern: 'y/M/d HH:m',
-        ).fromNow();
-      } else {
-        return Jiffy.parse(
-          publishAt
-              .replaceAll(RegExp('周. '), '')
-              .replaceAll(RegExp('[年月日]'), '/'),
-          pattern: 'y/M/d/HH:m',
-        ).fromNow();
+        if (day != 0) {
+          if (day < 0) {
+            now.subtract(Duration(days: day.abs()));
+          } else {
+            now.add(Duration(days: day));
+          }
+        }
+        return '${now.year}/${now.month}/${now.day}';
       }
-    } on FormatException catch (_) {
+
+      final cases = [
+        ('今天', today),
+        ('昨天', () => today(-1)),
+      ];
+      for (final (keyword, replace) in cases) {
+        if (publishAt.contains(keyword)) {
+          return Jiffy.parse(
+            publishAt.replaceAll(
+              keyword,
+              replace(),
+            ),
+            pattern: 'y/M/d HH:m',
+          ).fromNow();
+        }
+      }
+      return Jiffy.parse(
+        publishAt
+            .replaceAll(RegExp('周. '), '')
+            .replaceAll(RegExp('[年月日]'), '/'),
+        pattern: 'y/M/d/HH:m',
+      ).fromNow();
+    } catch (_) {
       return publishAt;
     }
   }
